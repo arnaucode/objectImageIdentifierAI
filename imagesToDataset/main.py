@@ -28,6 +28,7 @@ def getDirectoryFiles(path, imgClass):
             #print filename
             image_data = imgFileToData(path + "/" + filename)
             images.append([image_data, imgClass])
+            print path + "/" + filename
     return images
 
 
