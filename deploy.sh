@@ -2,23 +2,18 @@ timestamp() {
   date +"%T"
 }
 
+cd serverPredictor
 
 timestamp
-echo "Starting imagesToDataset"
-cd imagesToDataset && python main.py
-cd ..
-cp ./imagesToDataset/dataset.npy ./nnTrain/dataset.npy
-
-timestamp
-echo "Starting nnTrain"
-cd nnTrain && python train.py
-cd ..
-cp ./nnTrain/nn.pkl ./serverPredictor/nn.pkl
+echo "Starting training the model: classifierChooser.py"
+python classifierChooser.py
 
 timestamp
 echo "Starting serverPredictor"
-cd serverPredictor && python main.py
+xterm -hold -e 'python serverPredictor.py' &
 
+sleep 4
 
-echo "----- deploy.sh finished -----"
 timestamp
+echo "Starting test.sh"
+xterm -hold -e 'bash test.sh' &

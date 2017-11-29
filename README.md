@@ -10,3 +10,16 @@
     - Take photo and upload to the server, to get the response (object or no object)
 
 ![hotdognohotdog](https://raw.githubusercontent.com/arnaucode/objectImageIdentifierAI/master/hotdognohotdog.png "hotdognohotdog")
+
+
+## Real steps
+- download images
+    - for example, can be done with https://github.com/arnaucode/imgDownloader.git
+- In /serverPredictor directory
+```
+python classifierChooser.py
+```
+This will generate the model.pkl. Then, run the serverPredictor.py
+```
+python serverPredictor.py
+```
