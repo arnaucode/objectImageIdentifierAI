@@ -10,6 +10,7 @@ import numpy as np
 
 from flask import Flask
 from flask_restful import Resource, Api, request
+from flask_cors import CORS
 
 
 from PIL import Image, ImageOps
@@ -23,6 +24,7 @@ size = 100, 100
 
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 
@@ -61,4 +63,4 @@ if __name__ == '__main__':
     logging.basicConfig(filename=logfilename,level=logging.DEBUG)
 
     print("server running")
-    app.run(port='3000')
+    app.run(port='3200')

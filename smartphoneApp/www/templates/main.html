@@ -2,7 +2,7 @@
   <ion-content>
     <div class="row">
       <div class="col">
-        <div class="button button-full button-stable">
+        <div ng-click="takePhoto()" class="button button-full">
           <i class="icon ion-camera"></i> Take Photo
         </div>
       </div>
@@ -12,14 +12,19 @@
         </div>
       </div>
     </div>
+    <input type='file' file-model='img_file'>
 
     <div class="list card">
       <div class="item item-image">
-        <img src="http://www.trueactivist.com/wp-content/uploads/2015/07/hotdog-300x300.jpg">
+        <img ng-src="{{img_file}}">
       </div>
-      <a class="item item-icon-left balanced" href="#">
+      <div ng-click="uploadFile()" class="button button-royal" href="#">
+        Send
+      </div>
+    </div>
+    <a ng-show="response!=''" class="item item-icon-left balanced" href="#">
         <i class="icon ion-checkmark"></i>
-        Is a Hotdog
+        Is a {{response}}
         </a>
     </div>
   </ion-content>

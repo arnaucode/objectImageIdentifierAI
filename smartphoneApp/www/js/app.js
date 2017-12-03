@@ -1,3 +1,4 @@
+var urlapi = "http://127.0.0.1:3200/";
 
 angular.module('app', [
     'ionic',
@@ -35,7 +36,8 @@ angular.module('app', [
         url: '/main',
         views: {
           'menuContent': {
-            templateUrl: 'templates/main.html'
+            templateUrl: 'templates/main.html',
+            controller: 'MainCtrl'
           }
         }
       });
