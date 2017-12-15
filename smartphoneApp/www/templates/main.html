@@ -1,6 +1,6 @@
 <ion-view view-title="Hotdog - No Hotdog App">
   <ion-content>
-    <div class="row">
+    <!--<div class="row">
       <div class="col">
         <div ng-click="takePhoto()" class="button button-full">
           <i class="icon ion-camera"></i> Take Photo
@@ -11,21 +11,28 @@
           <i class="icon ion-image"></i> From Gallery
         </div>
       </div>
-    </div>
-    <input type='file' file-model='img_file'>
+  </div>-->
+  <br>
+    <input type="file" ng-file-select="onFileSelect($files)" ng-model="imageSrc">
 
     <div class="list card">
       <div class="item item-image">
-        <img ng-src="{{img_file}}">
+        <img ng-src="{{imageSrc}}" />
       </div>
+
       <div ng-click="uploadFile()" class="button button-royal" href="#">
         Send
       </div>
     </div>
-    <a ng-show="response!=''" class="item item-icon-left balanced" href="#">
+    <a ng-show="response=='object'" class="item item-icon-left balanced" href="#">
         <i class="icon ion-checkmark"></i>
         Is a {{response}}
-        </a>
+    </a>
+
+    <a ng-show="response=='noobject'" class="item item-icon-left assertive" href="#">
+        <i class="icon ion-close"></i>
+        Is a {{response}}
+    </a>
     </div>
   </ion-content>
 </ion-view>

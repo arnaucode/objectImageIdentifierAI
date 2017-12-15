@@ -32,6 +32,7 @@ class Predict(Resource):
     def post(self):
         print("new predict")
         start = time.time()
+        print(request.files['file'])
         filer = request.files['file']#open the uploaded image, and transform to the numpy array
 
         #process the img
@@ -50,6 +51,8 @@ class Predict(Resource):
         logging.info("  [result]: " + r)
         roundtrip = time.time() - start
         logging.info("  [roundtriptime]: " + str(roundtrip) + "s")
+        print("Response: ")
+        print({'result': r})
         return({'result': r})
 
 api.add_resource(Predict, '/predict')

@@ -1,5 +1,7 @@
 var urlapi = "http://127.0.0.1:3200/";
 
+var selectedImg="";
+
 angular.module('app', [
     'ionic',
     'app.main',

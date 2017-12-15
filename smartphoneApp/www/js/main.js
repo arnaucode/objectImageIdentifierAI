@@ -1,10 +1,12 @@
 angular.module('app.main', [])
 
-.controller('MainCtrl', function($scope, $http) {
+.controller('MainCtrl', function($scope, $http, fileReader) {
     $scope.response = "";
-    $scope.model_file={};
-    
+    $scope.imageSrc="";
     $scope.uploadFile = function() {
+        var blob = dataURItoBlob(selectedImg);
+        $scope.img_file= blob;
+
         console.log("$scope.img_file");
         console.log($scope.img_file);
         var fd = new FormData();
@@ -31,50 +33,94 @@ angular.module('app.main', [])
                 });
     };
 
-    /*$scope.takePhoto = function() {
-        alert("a");
-        console.log("take photo");
-        var options = {
-                quality: 100,
-                destinationType: Camera.DestinationType.DATA_URL,
-                sourceType: Camera.sourceType,
-                allowEdit: true,
-                encodingType: Camera.EncodingType.PNG,
-                targetWidth: 500,
-                targetHeight: 500,
-                popoverOptions: CameraPopoverOptions,
-                saveToPhotoAlbum: false,
-                correctOrientation:true
-            };
+    function dataURItoBlob(dataURI) {
+        // convert base64/URLEncoded data component to raw binary data held in a string
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+            byteString = atob(dataURI.split(',')[1]);
+        else
+            byteString = unescape(dataURI.split(',')[1]);
 
-            $cordovaCamera.getPicture(options).then(function(imageData) {
-                //$scope.user.newAvatar = "data:image/jpeg;base64," + imageData;
-                $scope.img.imgdata = "data:image/jpeg;base64," + imageData;
-                $scope.img.img = imageData;
-                }, function(err) {
-                console.log(err);
-            });
-    };*/
-})
-.directive('fileModel', [
-    '$parse',
-    function($parse) {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attrs) {
-                var model = $parse(attrs.fileModel);
-                var modelSetter = model.assign;
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
-                element.bind('change', function() {
-                    scope.$apply(function() {
-                        if (attrs.multiple) {
-                            modelSetter(scope, element[0].files);
-                        } else {
-                            modelSetter(scope, element[0].files[0]);
-                        }
-                    });
-                });
-            }
-        };
+        // write the bytes of the string to a typed array
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], {type:mimeString});
     }
-]);
+
+})
+.directive("ngFileSelect", function(fileReader, $timeout) {
+    return {
+      scope: {
+        ngModel: '='
+      },
+      link: function($scope, el) {
+        function getFile(file) {
+          fileReader.readAsDataUrl(file, $scope)
+            .then(function(result) {
+              $timeout(function() {
+                $scope.ngModel = result;
+                selectedImg = result;
+              });
+            });
+        }
+
+        el.bind("change", function(e) {
+          var file = (e.srcElement || e.target).files[0];
+          getFile(file);
+        });
+      }
+    };
+  })
+.factory("fileReader", function($q, $log) {
+  var onLoad = function(reader, deferred, scope) {
+    return function() {
+      scope.$apply(function() {
+        deferred.resolve(reader.result);
+      });
+    };
+  };
+
+  var onError = function(reader, deferred, scope) {
+    return function() {
+      scope.$apply(function() {
+        deferred.reject(reader.result);
+      });
+    };
+  };
+
+  var onProgress = function(reader, scope) {
+    return function(event) {
+      scope.$broadcast("fileProgress", {
+        total: event.total,
+        loaded: event.loaded
+      });
+    };
+  };
+
+  var getReader = function(deferred, scope) {
+    var reader = new FileReader();
+    reader.onload = onLoad(reader, deferred, scope);
+    reader.onerror = onError(reader, deferred, scope);
+    reader.onprogress = onProgress(reader, scope);
+    return reader;
+  };
+
+  var readAsDataURL = function(file, scope) {
+    var deferred = $q.defer();
+
+    var reader = getReader(deferred, scope);
+    reader.readAsDataURL(file);
+
+    return deferred.promise;
+  };
+
+  return {
+    readAsDataUrl: readAsDataURL
+  };
+});
